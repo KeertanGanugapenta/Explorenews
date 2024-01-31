@@ -1,17 +1,12 @@
 const API_KEY = "28014d0b68d54edcb04d5db3faf5a2c0";
-const url = "https://newsapi.org/v2/everything";
+const url = "https://newsapi.org/v2/everything?q=";
 
 window.addEventListener("load", () => fetchNews("India"));
 
 async function fetchNews(query) {
   try {
     const encodedQuery = encodeURIComponent(query);
-    const res = await fetch(`${url}?q=${encodedQuery}&apiKey=${API_KEY}`);
-
-    if (!res.ok) {
-      throw new Error(`Failed to fetch news: ${res.statusText}`);
-    }
-
+    const res = await fetch(`${url}${encodedQuery}&apiKey=${API_KEY}`);
     const data = await res.json();
     bindData(data.articles);
   } catch (error) {
@@ -53,18 +48,14 @@ function fillDataInCard(cardClone, article) {
   });
 }
 
-function setActiveNavItem(navItemId) {
-  const navItem = document.getElementById(navItemId);
-  curSelectedNav?.classList.remove("active");
-  curSelectedNav = navItem;
-  curSelectedNav.classList.add("active");
-}
-
 let curSelectedNav = null;
 
 function onClickNavItem(id) {
   fetchNews(id);
-  setActiveNavItem(id);
+  const navItem = document.getElementById(id);
+  curSelectedNav?.classList.remove("active");
+  curSelectedNav = navItem;
+  curSelectedNav.classList.add("active");
 }
 
 const searchButton = document.getElementById("search-button");
@@ -74,5 +65,6 @@ searchButton.addEventListener("click", () => {
   const query = searchText.value;
   if (!query) return;
   fetchNews(query);
-  setActiveNavItem(null);
+  curSelectedNav?.classList.remove("active");
+  curSelectedNav = null;
 });
